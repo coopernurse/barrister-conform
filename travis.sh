@@ -2,7 +2,7 @@
 
 IMAGE=coopernurse/barrister-conform
 
-docker -d &
+docker -d -H unix:///var/run/docker.sock &
 sleep 2
 docker pull $IMAGE
 docker run $IMAGE
