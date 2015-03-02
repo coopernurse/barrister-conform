@@ -1,0 +1,18 @@
+[submodule "binds/barrister"]
+	path = binds/barrister
+	url = git@github.com:coopernurse/barrister.git
+[submodule "binds/barrister-php"]
+	path = binds/barrister-php
+	url = git@github.com:coopernurse/barrister-php.git
+[submodule "binds/barrister-java"]
+	path = binds/barrister-java
+	url = git@github.com:coopernurse/barrister-java.git
+[submodule "binds/barrister-go"]
+	path = binds/barrister-go
+	url = git@github.com:coopernurse/barrister-go.git
+[submodule "binds/barrister-ruby"]
+	path = binds/barrister-ruby
+	url = git@github.com:coopernurse/barrister-ruby.git
+[submodule "binds/barrister-js"]
+	path = binds/barrister-js
+	url = git@github.com:coopernurse/barrister-js.git
