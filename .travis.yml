@@ -1,12 +1,12 @@
 install:
-  - sudo sh -c "wget -qO- https://get.docker.io/gpg | apt-key add -"
-  - sudo sh -c "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
-  - sudo apt-get update
-  - echo exit 101 | sudo tee /usr/sbin/policy-rc.d
-  - sudo chmod +x /usr/sbin/policy-rc.d
-  - sudo apt-get install -qy slirp lxc lxc-docker
+  - mkdir -p ~/.ssh
+  - ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -N ""
+  - wget http://get.docker.io/ubuntu/pool/main/l/lxc-docker-1.4.1/lxc-docker-1.4.1_1.4.1_amd64.deb
+  - sudo dpkg -i lxc-docker-1.4.1_1.4.1_amd64.deb
+  - sudo apt-get -fy install
+  - sudo apt-get -y install cgroup-lite
+  - sudo ln -s /usr/bin/docker /usr/bin/docker.io
+  - sudo apt-get install -y slirp
   - git clone git://github.com/jpetazzo/sekexe
 script:
-  - sudo docker -d &
-  - sekexe/run "sudo docker pull coopernurse/barrister-conform"
-  - sekexe/run "sudo docker run coopernurse/barrister-conform"
+  - sekexe/run "docker -d & && sleep 2 && docker pull coopernurse/barrister-conform && docker run coopernurse/barrister-conform"
