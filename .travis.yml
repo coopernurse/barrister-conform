@@ -8,10 +8,5 @@ install:
   - sudo ln -s /usr/bin/docker /usr/bin/docker.io
   - sudo apt-get install -y slirp
   - git clone git://github.com/jpetazzo/sekexe
-before_script:
-  - sudo sekexe/run "docker -d &" &
 script:
-  - sudo sekexe/run "docker pull coopernurse/barrister-conform"
-  - sudo sekexe/run "docker run coopernurse/barrister-conform"
-after_script:
-  - sudo kill `sudo jobs`
+  - sudo sekexe/run `pwd`/travis.sh
