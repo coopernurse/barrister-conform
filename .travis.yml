@@ -10,5 +10,61 @@ install:
   - sudo ln -s /usr/bin/docker /usr/bin/docker.io
   - sudo apt-get install -y slirp
   - git clone git://github.com/jpetazzo/sekexe
-script:
-  - sekexe/run `pwd`/travis.sh
+script: |
+  # prepare a little bash script for sekexe
+  cat > ./run.sh <<CMD
+  #!/bin/bash
+
+  set -e
+
+  # where to keep the docker pid
+  PIDFILE=/var/run/docker.pid
+
+  # make sure docker stops at the end
+  stop_docker() {
+  (
+   if [[ -f \$PIDFILE ]]
+  	then
+    kill \$(cat \$PIDFILE)
+    fi
+    )
+  }
+  trap stop_docker EXIT
+
+  mount -t proc none /proc
+  mkdir /dev/pts
+  mount -t devpts none /dev/pts
+  mkdir /dev/shm
+  mount -t tmpfs none /dev/shm
+  mount -t sysfs none /sys
+  mount -t tmpfs none /sys/fs/cgroup
+  echo 1 > /proc/sys/net/ipv4/ip_forward
+  echo 0 > /proc/sys/kernel/printk
+  ip addr add 127.0.0.1 dev lo
+  ip link set lo up
+  ip addr add 10.1.1.1/24 dev eth0
+  ip link set eth0 up
+  ip route add default via 10.1.1.254
+  echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+
+  # make sure we're in this directory
+  cd $(pwd)
+
+  # start docker backgrounded
+  docker -d -p \$PIDFILE >/dev/null 2>&1 &
+
+  # wait for docker to be ready
+  sleep 5
+
+  # run the tests
+  docker pull coopernurse/barrister-conform
+  docker run  coopernurse/barrister-conform
+  CMD
+
+  # make the script executable
+  chmod +x ./run.sh
+
+  # run the script inside UML
+  sudo ./sekexe/uml mem=1G rootfstype=hostfs rw \
+  eth0=slirp,,/usr/bin/slirp-fullbolt \
+    init=$(pwd)/run.sh
