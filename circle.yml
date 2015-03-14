@@ -1,0 +1,8 @@
+machine:
+  services:
+      - docker
+
+test:
+  override:
+      - docker pull coopernurse/barrister-conform
+      - docker run coopernurse/barrister-conform
