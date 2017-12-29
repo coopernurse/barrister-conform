@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian:jessie
 
 # java
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 && \
@@ -8,8 +8,9 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 &&
 
 # java, python, ruby, php
 RUN apt-get update && \
-    apt-get -y install curl python python-pip ruby php5-cli php5-curl oracle-java8-installer git ca-certificates make && \
+    apt-get -y install curl python python-setuptools ruby php5-cli php5-curl oracle-java8-installer git ca-certificates make && \
     apt-get clean
+RUN curl -LO https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm -f get-pip.py
 
 # maven
 RUN wget --no-verbose -O /tmp/apache-maven-3.2.2.tar.gz http://archive.apache.org/dist/maven/maven-3/3.2.2/binaries/apache-maven-3.2.2-bin.tar.gz && \
@@ -55,7 +56,7 @@ RUN cd /app/binds/barrister-java && \
     cd conform && mvn -Dmaven.javadoc.skip=true -Dmaven.test.skip=true package
 
 # ruby deps
-RUN gem install sinatra
+RUN apt-get install -y ruby-sinatra
 
 # go deps
 RUN mkdir -p /gopath/src/github.com/coopernurse/ && \
